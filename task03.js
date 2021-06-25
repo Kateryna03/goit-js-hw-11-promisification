@@ -5,42 +5,73 @@
 // `transaction` і повертала проміс.
 
 // ```js
+// const randomIntegerFromInterval = (min, max) => {
+//   return Math.floor(Math.random() * (max - min + 1) + min);
+// };
+
+// const makeTransaction = (transaction, onSuccess, onError) => {
+//   const delay = randomIntegerFromInterval(200, 500);
+
+//   setTimeout(() => {
+//     const canProcess = Math.random() > 0.3;
+
+//     if (canProcess) {
+//       onSuccess(transaction.id, delay);
+//     } else {
+//       onError(transaction.id);
+//     }
+//   }, delay);
+// };
+
+// const logSuccess = (id, time) => {
+//   console.log(`Transaction ${id} processed in ${time}ms`);
+// };
+
+// const logError = id => {
+//   console.warn(`Error processing transaction ${id}. Please try again later.`);
+// };
+
+/*
+ * Працює так
+ */
+// makeTransaction({ id: 70, amount: 150 }, logSuccess, logError);
+// makeTransaction({ id: 71, amount: 230 }, logSuccess, logError);
+// makeTransaction({ id: 72, amount: 75 }, logSuccess, logError);
+// makeTransaction({ id: 73, amount: 100 }, logSuccess, logError);
+/*
+ * Повинно працювати так
+ */
 const randomIntegerFromInterval = (min, max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-const makeTransaction = (transaction, onSuccess, onError) => {
-  const delay = randomIntegerFromInterval(200, 500);
-
-  setTimeout(() => {
-    const canProcess = Math.random() > 0.3;
-
-    if (canProcess) {
-      onSuccess(transaction.id, delay);
-    } else {
-      onError(transaction.id);
-    }
-  }, delay);
+const makeTransaction = (transaction) => {
+    return new Promise((resolve, reject) => {
+    const delay = randomIntegerFromInterval(200, 500);
+        
+        console.log(delay);
+        setTimeout(() => {
+           const canProcess = Math.random() > 0.3; 
+           if (canProcess) {
+               resolve({ id:transaction.id, time:delay }) ;
+            } 
+            reject(transaction.id);
+            
+        }, delay);
+    });
 };
-
-const logSuccess = (id, time) => {
+    
+const logSuccess = ({ id, time }) => {//передаём объект id time и в резолве принимаем объект
+    //console.log(time);
+    //сonsole.log(id);
   console.log(`Transaction ${id} processed in ${time}ms`);
 };
 
 const logError = id => {
   console.warn(`Error processing transaction ${id}. Please try again later.`);
-};
+}; 
 
-/*
- * Працює так
- */
-makeTransaction({ id: 70, amount: 150 }, logSuccess, logError);
-makeTransaction({ id: 71, amount: 230 }, logSuccess, logError);
-makeTransaction({ id: 72, amount: 75 }, logSuccess, logError);
-makeTransaction({ id: 73, amount: 100 }, logSuccess, logError);
-/*
- * Повинно працювати так
- */
+//console.log(makeTransaction({ id: 70, amount: 150 }));
 makeTransaction({ id: 70, amount: 150 })
   .then(logSuccess)
   .catch(logError);
